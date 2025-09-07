@@ -1,0 +1,37 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "John",
+      "surname": "Doe",
+      "email": "user1@email.com",
+      "issuedBook": "1",
+      "issuedDate": "04/01/2022",
+      "returnDate": "05/01/2022",
+      "subscriptionType": "Premium",
+      "subscriptionDate": "04/01/2022"
+    },
+    {
+      "id": "2",
+      "name": "Alice",
+      "surname": "Smith",
+      "email": "user2@email.com",
+      "issuedBook": "3",
+      "issuedDate": "06/01/2022",
+      "returnDate": "07/01/2022",
+      "subscriptionType": "Standard",
+      "subscriptionDate": "06/01/2022"
+    },
+    {
+      "id": "3",
+      "name": "Bob",
+      "surname": "Johnson",
+      "email": "user3@email.com",
+      "issuedBook": "5",
+      "issuedDate": "08/01/2022",
+      "returnDate": "09/01/2022",
+      "subscriptionType": "Basic",
+      "subscriptionDate": "08/01/2022"
+    }
+  ]
+}
