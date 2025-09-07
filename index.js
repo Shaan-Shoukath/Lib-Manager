@@ -8,11 +8,17 @@ const PORT = 8081;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  req.status(200).json({
+  res.status(200).json({
     message: "Home Page:-)",
   });
 });
-
+/**
+ * Route: /users
+ * Method: GET
+ * Description: Get All Users
+ * Access: Public
+ * Parameters: None
+ */
 app.get("/users", (req, res) => {
   res.status(200).json({
     success: true,
@@ -26,7 +32,13 @@ app.get("/users", (req, res) => {
 //   });
 // });
 
-//Get User By ID
+/**
+ * Route: /users/:id
+ * Method: GET
+ * Description: Get User By ID
+ * Access: Public
+ * Parameters: id
+ */
 app.get("/users/:id", (req, res) => {
   const { id } = req.params;
   const user = users.find((each) => each.id === id);
@@ -44,7 +56,13 @@ app.get("/users/:id", (req, res) => {
   });
 });
 
-//Create New User
+/**
+ * Route: /users
+ * Method: POST
+ * Description: Create New User
+ * Access: Public
+ * Parameters: id, name, surname, email, subscriptionType, subscriptionDate
+ */
 app.post("/users", (req, res) => {
   const { id, name, surname, email, subscriptionType, subscriptionDate } =
     req.body;
@@ -76,6 +94,42 @@ app.post("/users", (req, res) => {
     message: "User Created Successfully",
   });
 });
+
+/**
+ * Route: /users/:id
+ * Method: PUT
+ * Description: Update User By ID
+ * Access: Public
+ * Parameters: id data
+ */
+app.put("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { data } = req.body;
+
+  const user = users.find((each) => each.id === id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: `User Not Found With id:${id}`,
+    });
+  }
+
+  const updateUser = users.map((each) => {
+    if (each.id === id) {
+      return {
+        ...each,
+        ...data,
+      };
+    }
+    return each;
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "User Details Updated Successfully",
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server Up And Running At http://localhost:${PORT}`);
 });
