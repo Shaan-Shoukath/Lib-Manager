@@ -26,12 +26,13 @@ app.get("/users", (req, res) => {
 //   });
 // });
 
+//Get User By ID
 app.get("/users/:id", (req, res) => {
   const { id } = req.params;
   const user = users.find((each) => each.id === id);
 
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       success: false,
       message: `User Not Found ${id}`,
     });
@@ -43,6 +44,38 @@ app.get("/users/:id", (req, res) => {
   });
 });
 
+//Create New User
+app.post("/users", (req, res) => {
+  const { id, name, surname, email, subscriptionType, subscriptionDate } =
+    req.body;
+  if (
+    !id ||
+    !name ||
+    !surname ||
+    !email ||
+    !subscriptionType ||
+    !subscriptionDate
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Please Provide All Details",
+    });
+  }
+
+  const user = users.find((each) => each.id === id);
+  if (user) {
+    return res.status(409).json({
+      success: false,
+      message: `User Already Exists With id:${id}`,
+    });
+  }
+
+  users.push({ id, name, surname, email, subscriptionType, subscriptionDate });
+  res.status(201).json({
+    success: true,
+    message: "User Created Successfully",
+  });
+});
 app.listen(PORT, () => {
   console.log(`Server Up And Running At http://localhost:${PORT}`);
 });
