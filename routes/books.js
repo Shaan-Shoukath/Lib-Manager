@@ -1,6 +1,6 @@
 const express = require("express");
 const { books } = require("../data/books.json");
-const e = require("express");
+const { users } = require("../data/users.json");
 
 const router = express.Router();
 
@@ -93,6 +93,13 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
 
+  // if (!data || Object.keys(data).length === 0) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "Please Provide Data To Update",
+  //   });
+  // }
+
   const book = books.find((each) => each.id === id);
   if (!book) {
     return res.status(404).json({
@@ -128,5 +135,60 @@ router.put("/:id", (req, res) => {
  * Access: Public
  * Parameters: id
  */
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  const book = books.findIndex((each) => each.id === id);
+  if (!book) {
+    return res.status(404).json({
+      success: false,
+      message: `Book Not Found With ID ${id}`,
+    });
+  }
+  const updatedBooks = books.filter((each) => each.id !== id);
+
+  res.status(200).json({
+    success: true,
+    message: `Book Deleted Successfully With ID ${id}`,
+    data: updatedBooks,
+  });
+});
+
+/**
+ * Route: /books/issued/for-users
+ * Method: GET
+ * Description: Get All Issued Books
+ * Access: Public
+ * Parameters: None
+ */
+router.get("/issued/for-users", (req, res) => {
+  // const issuedBooks = books.filter((each) => each.issued);
+  const usersWithIssuedBooks = users.filter((each) => {
+    if (each.issuedBook) {
+      return each;
+    }
+  });
+  const issuedBooks = [];
+
+  usersWithIssuedBooks.forEach((user) => {
+    const book = books.find((each) => each.id === user.issuedBook);
+
+    book.issuedBy = each.name;
+    book.issuedDate = each.issuedDate;
+    book.returnDate = each.returnDate;
+    issuedBooks.push(book);
+  });
+
+  if (!issuedBooks === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "No Books Issued",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: issuedBooks,
+  });
+});
 
 module.exports = router;
