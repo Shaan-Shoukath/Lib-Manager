@@ -191,4 +191,66 @@ router.get("/issued/for-users", (req, res) => {
   });
 });
 
+/**
+ * Route: /users/subscription-details/:id
+ * Method: GET
+ * Description: Get All Users With Subscription Details
+ * Access: Public
+ * Parameters: id
+ */
+router.get("/users/subscription-details/:id", (req, res) => {
+  const { id } = req.params;
+  const user = users.find((each) => each.id === id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: `User Not Found With ID ${id}`,
+    });
+  }
+
+  const getDateInDays = (data = "") => {
+    let date;
+    if (data === "") {
+      date = new Date();
+    } else {
+      date = new Date(data);
+    }
+    let days = Math.floor(date / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const subscriptionType = (date) => {
+    if (data === "Basic") {
+      date = date + 90;
+    } else if (data === "Standard") {
+      date = date + 180;
+    } else if (data === "Premium") {
+      date = date + 365;
+    }
+    return date;
+  };
+
+  let returnDate = getDateInDays(user.returnDate);
+  let currentDate = getDateInDays();
+  let subscriptionDate = getDateInDays(user.subscriptionDate);
+  let subscriptionExpiration = subscriptionType(user.subscriptionType);
+
+  const data = {
+    ...user,
+    subscriptionExpired: subscriptionExpiration < currentDate,
+    subscriptionDaysLeft: subscriptionExpiration - currentDate,
+    daysLeft: returnDate - currentDate,
+    returnDate: returnDate < currentDate ? "Book Is Overdue" : returnDate,
+    fine:
+      returnDate < currentDate
+        ? subscriptionExpiration <= currentDate
+          ? 200
+          : 100
+        : 0,
+  };
+  res.status(200).json({
+    success: true,
+    data: data,
+  });
+});
 module.exports = router;
